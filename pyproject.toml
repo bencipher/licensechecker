@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "licesenser"
+version = "0.1.0"
+description = ""
+authors = ["bcx <femolak@gmail.com>"]
+readme = "README.md"
+license = "Apache2"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+click = "^8.1.7"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+licesenser = "core:app"
