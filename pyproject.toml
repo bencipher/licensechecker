@@ -13,6 +13,7 @@ openai = "^1.51.2"
 langchain = "^0.3.3"
 langchain-openai = "^0.2.2"
 langchain-google-vertexai = "^2.0.4"
+rich-click = "^1.8.3"
 
 
 [tool.poetry.group.dev.dependencies]
