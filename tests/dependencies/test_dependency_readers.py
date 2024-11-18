@@ -25,6 +25,7 @@ def test_pyproject_toml_reader(pyproject_data: str) -> None:
         dependencies = reader.read_dependencies(file.name)
 
         expected_dependencies = {
+            "python": "^3.8",
             "requests": "^2.25.1",
             "numpy": "1.21.0",
             "pandas": "*",
@@ -49,7 +50,9 @@ def test_requirements_txt_reader(requirements_data: str) -> None:
         assert dependencies == expected_dependencies
 
 
-def test_dependency_context() -> None:
+def test_dependency_context(
+    pipfile_data: str, requirements_data: str, pyproject_data: str
+) -> None:
     # Create instances of dependency readers
     pipfile_reader = PipfileReader()
     requirements_reader = RequirementsTxtReader()
@@ -60,19 +63,19 @@ def test_dependency_context() -> None:
 
     # Test with Pipfile strategy
     assert isinstance(
-        dependency_file_reader.list_dependencies("dummy_path"), dict
+        dependency_file_reader.list_dependencies(pipfile_data), dict
     ), "PipfileReader should return a dictionary"
 
     # Change strategy to Requirements.txt
     dependency_file_reader.set_strategy(requirements_reader)
     assert isinstance(
-        dependency_file_reader.list_dependencies("dummy_path"), dict
+        dependency_file_reader.list_dependencies(requirements_data), dict
     ), "RequirementsTxtReader should return a dictionary"
 
     # Change strategy to pyproject.toml
     dependency_file_reader.set_strategy(pyproject_reader)
     assert isinstance(
-        dependency_file_reader.list_dependencies("dummy_path"), dict
+        dependency_file_reader.list_dependencies(pyproject_data), dict
     ), "PyprojectTomlReader should return a dictionary"
 
 
