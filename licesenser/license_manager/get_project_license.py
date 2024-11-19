@@ -128,12 +128,11 @@ class LicenseFinder:
 
     def find_all_license_information(
         self: "LicenseFinder", root_dir: str
-    ) -> Union[dict[str, LicenseType], None]:
+    ) -> dict[str, LicenseType]:
         """Find and extract all license information from target files."""
         found_files = self.file_finder.find_files(root_dir)
         license_info = {}
         for file_path in found_files:
-            print(f"{file_path=}")
             info = asyncio.run(self.license_extractor(file_path))
             if info:
                 license_info[file_path] = info
