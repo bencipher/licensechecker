@@ -106,7 +106,6 @@ async def identify_license_from_setup_cfg(file_path: str) -> LicenseType:
 async def extract_license_info_async(file_path: str) -> LicenseType:
     """Extract license information from the given file asynchronously."""
     file_name = os.path.basename(file_path)
-    print(f"Checking {file_name=}")
     try:
         if file_name.upper() == "LICENSE" or re.match(
             r"^LICENSE\..*", file_name.upper()
