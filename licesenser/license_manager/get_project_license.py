@@ -152,18 +152,24 @@ class LicenseFinder:
 
     async def find_all_license_information_async(
         self: "LicenseFinder", root_dir: str
-    ) -> dict[str, LicenseType]:
+    ) -> dict[str, Union[LicenseType, BaseException]]:  # fix this later
         """Find and extract all license information from target files asynchronously."""
         found_files = self.file_finder.find_files(root_dir)
         tasks = [self.license_extractor(file_path) for file_path in found_files]
 
-        results = await asyncio.gather(*tasks)
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        valid_results = [
+            (file_path, info)
+            for file_path, info in zip(found_files, results)
+            if not isinstance(info, Exception)
+        ]
+
         license_info = {}
-        for file_path, info in zip(found_files, results):
-            if not info or isinstance(info, Exception):
-                logging.error(f"Error processing {file_path}: {info}")
-                continue
-            license_info[file_path] = info
+        for file_path, info in valid_results:
+            if info:
+                license_info[file_path] = info
+
         return license_info
 
     async def find_first_license_information_async(
