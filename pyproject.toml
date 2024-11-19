@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["bcx <femolak@gmail.com>"]
 readme = "README.md"
-license = "Apache2"
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -17,6 +16,8 @@ rich-click = "^1.8.3"
 toml = "^0.10.2"
 types-toml = "^0.10.8.20240310"
 pytest = "^8.3.3"
+aiofiles = "^24.1.0"
+pytest-asyncio = "^0.24.0"
 
 
 [tool.poetry.group.dev.dependencies]
