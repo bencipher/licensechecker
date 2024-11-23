@@ -17,24 +17,25 @@ repos:
       - id: debug-statements
       - id: mixed-line-ending
 
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
+  - repo: local
     hooks:
-      - id: black
-        language_version: python3
+      - id: ruff-check
+        name: Ruff check
+        entry: poetry run ruff check
+        args: [--fix]
+        language: system
+        types: [file, python]
+      - id: ruff-format
+        name: Ruff format
+        entry: poetry run ruff format
+        language: system
+        types: [file, python]
+      - id: pyright
+        name: Pyright type check
+        entry: poetry run pyright
+        language: system
+        types: [file, python]
 
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-        additional_dependencies: [flake8-annotations]
-        args: [--max-line-length=126]
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
-    hooks:
-      - id: mypy
-        args: ["--follow-imports=silent"]
 
   - repo: https://github.com/asottile/yesqa
     rev: v1.4.0
