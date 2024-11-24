@@ -1,3 +1,5 @@
+from typing import Union
+
 from .dependency import DependencyReader
 
 
@@ -8,5 +10,7 @@ class DependencyFileReader:
     def set_strategy(self: "DependencyFileReader", strategy: DependencyReader) -> None:
         self._strategy = strategy
 
-    def list_dependencies(self: "DependencyFileReader", file_path: str) -> dict:
+    def list_dependencies(
+        self: "DependencyFileReader", file_path: str
+    ) -> Union[dict[str, str], set[str]]:
         return self._strategy.read_dependencies(file_path)
