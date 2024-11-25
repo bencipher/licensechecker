@@ -15,6 +15,8 @@ langchain-google-vertexai = "^2.0.4"
 rich-click = "^1.8.3"
 toml = "^0.10.2"
 aiofiles = "^24.1.0"
+appdirs = "^1.4.4"
+requests-cache = "^1.2.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"
@@ -23,6 +25,8 @@ pytest = "^8.3.3"
 pre-commit = "^4.0.1"
 ruff = "^0.8.0"
 pyright = "^1.1.389"
+loguru = "^0.7.2"
+markdown= "^3.6"
 
 [build-system]
 requires = ["poetry-core"]
