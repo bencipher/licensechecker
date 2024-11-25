@@ -1,3 +1,5 @@
+import pytest
+
 from licesenser.dependency_reader.deps_reader import DependencyFileReader
 from licesenser.dependency_reader.pipfile import PipfileReader
 from licesenser.dependency_reader.poetry_toml import PyprojectTomlReader
@@ -23,7 +25,6 @@ def test_pyproject_toml_reader(pyproject_data: str) -> None:
     with open(pyproject_data, "r") as file:
         reader = PyprojectTomlReader()
         dependencies = reader.read_dependencies(file.name)
-        print(dependencies)
         expected_dependencies = {
             "python=^3.8",
             "requests=^2.25.1",
@@ -77,6 +78,22 @@ def test_dependency_context(
     assert isinstance(
         dependency_file_reader.list_dependencies(pyproject_data), set
     ), "PyprojectTomlReader should return a Set"
+
+
+def test_toml_reader_unsupported_file():
+    with open("file.txt", "w") as file:
+        file.write("This is a test file and should not contain any TOML content.")
+    with open("file.txt", "r") as file:
+        reader = PyprojectTomlReader()
+        with pytest.raises(Exception) as exc_info:
+            reader.read_dependencies(file.name)
+        assert "Only Toml Files allowed" in str(exc_info.value)
+
+
+def test_toml_reader_no_file():
+    reader = PyprojectTomlReader()
+    with pytest.raises(FileNotFoundError):
+        reader.read_dependencies("nonexistent_file.toml")
 
 
 def test_unsupported_file_type(unsupported_data: str) -> None:
