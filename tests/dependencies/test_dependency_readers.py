@@ -23,13 +23,13 @@ def test_pyproject_toml_reader(pyproject_data: str) -> None:
     with open(pyproject_data, "r") as file:
         reader = PyprojectTomlReader()
         dependencies = reader.read_dependencies(file.name)
-
+        print(dependencies)
         expected_dependencies = {
-            "python": "^3.8",
-            "requests": "^2.25.1",
-            "numpy": "1.21.0",
-            "pandas": "*",
-            "scipy": {"version": "==1.7.1", "markers": "python_version >= '3.6'"},
+            "python=^3.8",
+            "requests=^2.25.1",
+            "numpy=1.21.0",
+            "pandas=*",
+            "scipy=1.7.1",
         }
         # assert file ends with pyproject.toml"
         assert dependencies == expected_dependencies
@@ -75,8 +75,8 @@ def test_dependency_context(
     # Change strategy to pyproject.toml
     dependency_file_reader.set_strategy(pyproject_reader)
     assert isinstance(
-        dependency_file_reader.list_dependencies(pyproject_data), dict
-    ), "PyprojectTomlReader should return a dictionary"
+        dependency_file_reader.list_dependencies(pyproject_data), set
+    ), "PyprojectTomlReader should return a Set"
 
 
 def test_unsupported_file_type(unsupported_data: str) -> None:

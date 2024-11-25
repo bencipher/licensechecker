@@ -27,6 +27,7 @@ ruff = "^0.8.0"
 pyright = "^1.1.389"
 loguru = "^0.7.2"
 markdown= "^3.6"
+scipy = { version = "==1.7.1", markers = "python_version >= '3.6'" }
 
 [build-system]
 requires = ["poetry-core"]
