@@ -17,6 +17,7 @@ toml = "^0.10.2"
 aiofiles = "^24.1.0"
 appdirs = "^1.4.4"
 requests-cache = "^1.2.1"
+diskcache = "^5.6.3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"
@@ -26,8 +27,8 @@ pre-commit = "^4.0.1"
 ruff = "^0.8.0"
 pyright = "^1.1.389"
 loguru = "^0.7.2"
-markdown= "^3.6"
-scipy = { version = "==1.7.1", markers = "python_version >= '3.6'" }
+markdown= "^3.6" # test to be removed
+scipy = "^1.10.0" # test to be removed
 
 [build-system]
 requires = ["poetry-core"]
