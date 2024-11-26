@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ucstr(str):
@@ -45,6 +45,12 @@ class PackageInfo(BaseModel):
     def name_with_version(self) -> str:
         """Return the name and local version."""
         return f"{self.name}-{self.local_version}"
+
+    @field_validator("name")
+    def name_must_not_be_empty(cls, v):
+        if not v:
+            raise ValueError("name must not be empty")
+        return v
 
     def __hash__(self):
         return hash((self.name, self.local_version, self.latest_version))
