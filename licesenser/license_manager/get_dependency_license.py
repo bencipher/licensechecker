@@ -6,9 +6,6 @@ from typing import Any, Optional
 from requests.exceptions import ConnectTimeout
 
 from licesenser.connections import session
-from licesenser.dependency_reader.deps_reader import DependencyFileReader
-from licesenser.dependency_reader.pipfile import PipfileReader
-from licesenser.dependency_reader.poetry_toml import PyprojectTomlReader
 from licesenser.schemas import JOINS, UNKNOWN, PackageInfo, ucstr
 
 
@@ -170,19 +167,3 @@ def get_project_packages(reqs: set[str]) -> set[PackageInfo]:
                 packageinfo.add(create_package_info(name=requirement, error_code=1))
 
     return packageinfo
-
-
-if __name__ == "__main__":
-    import time
-
-    start_time = time.perf_counter()
-    pipfile_reader = PipfileReader()
-    pyproject_reader = PyprojectTomlReader()
-    dependency_file_reader = DependencyFileReader(pyproject_reader)
-    reqs = dependency_file_reader.list_dependencies(file_path="pyproject.toml")
-    print(f"{reqs=} {type(reqs)=}")
-    package_data = get_project_packages(reqs=reqs)
-    # for idx, package in enumerate(package_data):
-    #     print(f"Package {idx} info is {package}\n")
-    end_time = time.perf_counter()
-    print(f"It took {end_time - start_time} to complete")
