@@ -10,12 +10,13 @@ def test_pipfile_reader(pipfile_data: str) -> None:
     with open(pipfile_data, "r") as file:
         reader = PipfileReader()
         dependencies = reader.read_dependencies(file.name)
+        print(f"{dependencies=}")
 
         expected_dependencies = {
-            "requests": "*",
-            "numpy": "==1.21.0",
-            "pandas": {"version": "*", "markers": "python_version >= '3.6'"},
-            "scipy": {"version": "==1.7.1", "markers": "python_version >= '3.6'"},
+            "requests=*",
+            "numpy=1.21.0",
+            "pandas=*",
+            "scipy=1.7.1",
         }
         # assert file ends with Pipfile"
         assert dependencies == expected_dependencies
@@ -42,10 +43,10 @@ def test_requirements_txt_reader(requirements_data: str) -> None:
         dependencies = reader.read_dependencies(file.name)
 
         expected_dependencies = {
-            "requests": "2.25.1",
-            "numpy": "1.21.0",
-            "pandas": "1.3.3",
-            "scipy": "1.7.1",
+            "requests=2.25.1",
+            "numpy=1.21.0",
+            "pandas=1.3.3",
+            "scipy=1.7.1",
         }
         # assert file ends with requirements.txt"
         assert dependencies == expected_dependencies
@@ -64,14 +65,14 @@ def test_dependency_context(
 
     # Test with Pipfile strategy
     assert isinstance(
-        dependency_file_reader.list_dependencies(pipfile_data), dict
-    ), "PipfileReader should return a dictionary"
+        dependency_file_reader.list_dependencies(pipfile_data), set
+    ), "PipfileReader should return a Set"
 
     # Change strategy to Requirements.txt
     dependency_file_reader.set_strategy(requirements_reader)
     assert isinstance(
-        dependency_file_reader.list_dependencies(requirements_data), dict
-    ), "RequirementsTxtReader should return a dictionary"
+        dependency_file_reader.list_dependencies(requirements_data), set
+    ), "RequirementsTxtReader should return a Set"
 
     # Change strategy to pyproject.toml
     dependency_file_reader.set_strategy(pyproject_reader)
