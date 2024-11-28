@@ -3,6 +3,7 @@ from __future__ import annotations
 from importlib import metadata
 from typing import Any, Optional
 
+import requests
 from requests.exceptions import ConnectTimeout
 
 from licesenser.connections import session
@@ -21,15 +22,18 @@ def get_license_from_classifier(classifiers: list[str] | None | list[Any]) -> uc
             str: the license name
 
     """
+    print(f"{classifiers=}")
     if not classifiers:
         return UNKNOWN
     licenses: list[str] = []
     for _val in classifiers:
         val = str(_val)
         if val.startswith("License"):
-            lice = val.split(" :: ")[-1]
-            if lice != "OSI Approved":
-                licenses.append(lice)
+            lice = val.split(" :: ")
+            if (
+                "OSI Approved" in lice and lice[-1] != "OSI Approved"
+            ):  # license must specify its name
+                licenses.append(lice[-1])
     return ucstr(JOINS.join(licenses) if len(licenses) > 0 else UNKNOWN)
 
 
@@ -70,6 +74,7 @@ def get_deps_info_from_local(requirement: ucstr) -> PackageInfo:
     :raises ModuleNotFoundError: if the package does not exist
     :return PackageInfo: package information
     """
+
     try:
         package_details = metadata.Distribution.from_name(requirement)
         pkg_meta = package_details.metadata
@@ -105,12 +110,14 @@ def get_deps_info_from_local(requirement: ucstr) -> PackageInfo:
 
     except metadata.PackageNotFoundError as error:
         raise ModuleNotFoundError from error
+    except Exception as error:
+        raise ModuleNotFoundError from error
 
 
 def get_deps_info_from_pypi(requirement: ucstr) -> PackageInfo:
     """Get package info from PyPI."""
     try:
-        request = session.get(f"https://pypi.org/pypi/{requirement}/json", timeout=3)
+        request = session.get(f"https://pypi.org/pypi/{requirement}/json", timeout=60)
         response = request.json()
         info = response.get("info", {})
         licenseClassifier = get_license_from_classifier(info["classifiers"])
@@ -129,7 +136,6 @@ def get_deps_info_from_pypi(requirement: ucstr) -> PackageInfo:
             if author_email and "<" in author_email:
                 author_email = author_email.split("<")[1][:-1]
 
-        # Use the helper function to create PackageInfo
         return create_package_info(
             name=info.get("name"),
             latest_version=info.get("version"),
@@ -144,26 +150,33 @@ def get_deps_info_from_pypi(requirement: ucstr) -> PackageInfo:
             ),
         )
     except ConnectTimeout as error:
-        print("error here after timeout")
-        raise ModuleNotFoundError from error
+        print("Connection timed out while trying to reach PyPI.")
+        raise ModuleNotFoundError(
+            f"Could not connect to PyPI for '{requirement}'."
+        ) from error
+    except requests.exceptions.ConnectionError as error:
+        print("Connection error occurred while trying to reach PyPI.")
+        raise ModuleNotFoundError(f"Connection error for '{requirement}'.") from error
+    except requests.exceptions.RequestException as error:
+        print("An error occurred while making a request to PyPI.")
+        raise ModuleNotFoundError(f"Request error for '{requirement}'.") from error
     except KeyError as error:
         raise ModuleNotFoundError from error
 
 
 def get_project_packages(reqs: set[str]) -> set[PackageInfo]:
     """Get dependency info"""
-    packageinfo = set()
+    package_info = set()
     for deps in reqs:
         requirement = ucstr(deps.split("=")[0])
+
         if requirement == "python":
             continue
         try:
-            packageinfo.add(get_deps_info_from_local(requirement))
+            package_info.add(get_deps_info_from_local(requirement))
         except ModuleNotFoundError:
             try:
-                packageinfo.add(get_deps_info_from_pypi(requirement))
+                package_info.add(get_deps_info_from_pypi(requirement))
             except ModuleNotFoundError:
-                print("Could not get info", requirement)
-                packageinfo.add(create_package_info(name=requirement, error_code=1))
-
-    return packageinfo
+                package_info.add(create_package_info(name=requirement, error_code=1))
+    return package_info
