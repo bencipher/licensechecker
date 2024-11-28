@@ -20,6 +20,8 @@ class PipfileReader(DependencyReader):
         package_sections = ["packages", "dev-packages"]
         for section in package_sections:
             for package_name, version in pipfile.get(section, {}).items():
+                if isinstance(version, dict):
+                    version = version.get("version", "*").strip("=")
                 version = str(version).strip("=")
                 dependencies.add(f"{package_name}={version}")
         return dependencies
