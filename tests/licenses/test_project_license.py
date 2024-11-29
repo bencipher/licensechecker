@@ -1,3 +1,4 @@
+# type:ignore
 import os
 
 import pytest  # type: ignore
@@ -15,7 +16,6 @@ def test_find_all_license_information(
     for file_path, info in all_license_info.items():
         assert os.path.exists(file_path)
         assert info is not None
-        print(f"{info=}, {file_path=}")
         assert info in [
             LicenseType.LGPL,
             LicenseType.MIT,

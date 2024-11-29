@@ -1,10 +1,10 @@
+# type: ignore
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from licesenser.license_manager.get_dependency_license import \
     get_deps_info_from_local
-from licesenser.schemas import ucstr
 
 
 class MockMetadata:
@@ -41,7 +41,7 @@ def test_get_deps_info_from_local(mock_metadata_distribution):
         "licesenser.license_manager.get_dependency_license.metadata.Distribution.from_name",
         return_value=mock_metadata_distribution,
     ):
-        package_info = get_deps_info_from_local(ucstr("example"))
+        package_info = get_deps_info_from_local("example")
 
         # Assertions to check if the package info is as expected
         assert package_info.name == "example"
