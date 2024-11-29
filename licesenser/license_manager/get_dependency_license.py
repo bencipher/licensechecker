@@ -22,7 +22,6 @@ def get_license_from_classifier(classifiers: list[str] | None | list[Any]) -> uc
             str: the license name
 
     """
-    print(f"{classifiers=}")
     if not classifiers:
         return UNKNOWN
     licenses: list[str] = []
